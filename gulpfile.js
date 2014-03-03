@@ -50,11 +50,13 @@ gulp.task('deleteTemp', function () {
 
 gulp.task('sass', ['deleteTemp'], function () {
   return gulp.src('app/styles/**/*.scss')
-    .pipe(sass({includePaths: ['app/bower_components']}))
+    .pipe(sass({
+      includePaths: ['app/bower_components'],
+      errLogToConsole: true
+    }))
     .pipe(gulp.dest('.tmp/styles'))
     .pipe(refresh(livereloadServer));
 });
-
 gulp.task('serverJs', function () {
   return gulp.src(['lib/**/*.js', 'server.js'])
     .pipe(jshint('.jshintrcnode'))
@@ -77,9 +79,9 @@ function checkAppReady() {
       port: HTTP_PORT,
       path: '/api/clients/'
     };
-    http.get(options, function() {
+    http.get(options, function () {
       process.env.NODE_APP_READY = 'true';
-    }).on('error', function() {
+    }).on('error', function () {
       process.env.NODE_APP_READY = 'false';
     });
   }

@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('supercrabtreegithubioBuildApp', [
-  'ngRoute'
+  'ngRoute',
+  'google-maps'
 ])
   .config(function ($routeProvider, $locationProvider) {
     $routeProvider
