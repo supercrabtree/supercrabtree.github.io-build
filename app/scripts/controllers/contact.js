@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('supercrabtreegithubioBuildApp')
-  .controller('ContactCtrl', function ($scope, $http, $window, $log) {
+  .controller('ContactCtrl', function ($scope, $http, $window, $document) {
 
     var styles = [{
       featureType: 'administrative.province',
@@ -79,19 +79,53 @@ angular.module('supercrabtreegithubioBuildApp')
       }]
     }];
 
-    $scope.mapOptions = {
+    var google = $window.google;
+    var map;
+    var center;
+
+    var zoomLevel = windowWidth() <= 529 ? 3 : 4;
+
+    var mapOptions = {
       styles: styles,
-      center: {
-        latitude: -28,
-        longitude: 134
-      },
-      zoom: 4,
-      draggable: 'true'
+      center: new google.maps.LatLng(-28, 134),
+      zoom: zoomLevel,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      disableDefaultUI: true,
+      zoomControl: false
     };
 
-    var map;
+    var image = {
+      url: 'http://www.georgecrabtree.com/img/home.png',
+      size: new google.maps.Size(60, 80),
+      anchor: new google.maps.Point(30, 80)
+    };
 
-    $window.onresize = function () {
+    function init() {
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+      google.maps.event.addListenerOnce(map, 'idle', addHomeMarker);
+
+      google.maps.event.addDomListener(map, 'idle', onMapIdle);
+      google.maps.event.addDomListener(window, 'resize', onMapResize);
+
+      $window.onresize = onWindowResize;
+      onWindowResize();
+    }
+    function addHomeMarker() {
+      new google.maps.Marker({
+        position: new google.maps.LatLng(-37.863199, 145.004554),
+        clickable: false,
+        animation: google.maps.Animation.DROP,
+        map: map,
+        icon: image
+      });
+    }
+    function onMapIdle() {
+      center = map.getCenter();
+    }
+    function onMapResize() {
+      map.setCenter(center);
+    }
+    function onWindowResize() {
       if (windowWidth() > 529) {
         map.setOptions({draggable: true});
       }
@@ -99,17 +133,17 @@ angular.module('supercrabtreegithubioBuildApp')
         map.setOptions({draggable: false});
         map.set('scrollwheel', false);
       }
-    };
+    }
     function windowWidth() {
-      if (document.body && document.body.offsetWidth) {
-        return document.body.offsetWidth;
+      if ($document.body && $document.body.offsetWidth) {
+        return $document.body.offsetWidth;
       }
-      if (document.compatMode === 'CSS1Compat' && document.documentElement && document.documentElement.offsetWidth) {
+      if ($document.compatMode === 'CSS1Compat' && $document.documentElement && $document.documentElement.offsetWidth) {
         return document.documentElement.offsetWidth;
       }
-      if (window.innerWidth) {
-        return window.innerWidth;
+      if ($window.innerWidth) {
+        return $window.innerWidth;
       }
     }
-
+    init();
   });
