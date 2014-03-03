@@ -111,7 +111,7 @@ angular.module('supercrabtreegithubioBuildApp')
       onWindowResize();
     }
     function addHomeMarker() {
-      new google.maps.Marker({
+      var marker = new google.maps.Marker({
         position: new google.maps.LatLng(-37.863199, 145.004554),
         clickable: false,
         animation: google.maps.Animation.DROP,
